@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3F582FE1-43DF-4A0C-9011-4551703327DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropaganda", "src\Cropaganda\Cropaganda.csproj", "{F501551F-53D4-4BD9-963F-B788773C277D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cropaganda.Tests", "src\Cropaganda.Tests\Cropaganda.Tests.csproj", "{77FD563E-DEAD-4B75-9995-18C82AB09FFE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F501551F-53D4-4BD9-963F-B788773C277D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F501551F-53D4-4BD9-963F-B788773C277D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F501551F-53D4-4BD9-963F-B788773C277D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F501551F-53D4-4BD9-963F-B788773C277D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77FD563E-DEAD-4B75-9995-18C82AB09FFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77FD563E-DEAD-4B75-9995-18C82AB09FFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77FD563E-DEAD-4B75-9995-18C82AB09FFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77FD563E-DEAD-4B75-9995-18C82AB09FFE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F501551F-53D4-4BD9-963F-B788773C277D} = {3F582FE1-43DF-4A0C-9011-4551703327DB}
+		{77FD563E-DEAD-4B75-9995-18C82AB09FFE} = {3F582FE1-43DF-4A0C-9011-4551703327DB}
+	EndGlobalSection
+EndGlobal

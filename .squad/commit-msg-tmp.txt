@@ -1,0 +1,8 @@
+feat: implement crop UI, service, and tests
+
+- Linus: Full WPF crop UI (CropCanvas, MainWindow, overlays)
+- Livingston: CropService and CropMath
+- Basher: 29 passing tests (CropMath, CropService)
+- All components integrate cleanly; build and tests pass
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
