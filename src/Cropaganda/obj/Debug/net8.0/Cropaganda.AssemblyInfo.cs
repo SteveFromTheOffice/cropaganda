@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Cropaganda")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d4b65ff5c175e528ef3e964d923d148b8b668f75")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+22b9543a1e41fcf9323f9ae4b9bf095acde7a60d")]
 [assembly: System.Reflection.AssemblyProductAttribute("Cropaganda")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Cropaganda")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

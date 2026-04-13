@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Ycti1zKN4du1bcyYTPqPSR9BZw6PkOBBOf9OViz3WElNzY9OjFFN/n9BcysmAJZy8wHBPbv5N5QrxAVXkSagTQ==",
+  "dgSpecHash": "vY8Bo9MVnNKOgcUDfZ6DmMrKgSN43k5RI1JoVOjsn5JgqV7/YWT+VgtOn7YTxvMsPLNVvMTroxLuATUF2JbKvQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\mikew\\source\\repos\\cropaganda\\src\\Cropaganda\\Cropaganda.csproj",
   "expectedPackageFiles": [
@@ -21,17 +21,13 @@
     "C:\\Users\\mikew\\.nuget\\packages\\harfbuzzsharp.nativeassets.webassembly\\7.3.0.3\\harfbuzzsharp.nativeassets.webassembly.7.3.0.3.nupkg.sha512",
     "C:\\Users\\mikew\\.nuget\\packages\\harfbuzzsharp.nativeassets.win32\\7.3.0.3\\harfbuzzsharp.nativeassets.win32.7.3.0.3.nupkg.sha512",
     "C:\\Users\\mikew\\.nuget\\packages\\microcom.runtime\\0.11.0\\microcom.runtime.0.11.0.nupkg.sha512",
-    "C:\\Users\\mikew\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.6\\microsoft.net.illink.tasks.8.0.6.nupkg.sha512",
     "C:\\Users\\mikew\\.nuget\\packages\\skiasharp\\2.88.9\\skiasharp.2.88.9.nupkg.sha512",
     "C:\\Users\\mikew\\.nuget\\packages\\skiasharp.nativeassets.linux\\2.88.9\\skiasharp.nativeassets.linux.2.88.9.nupkg.sha512",
     "C:\\Users\\mikew\\.nuget\\packages\\skiasharp.nativeassets.macos\\2.88.9\\skiasharp.nativeassets.macos.2.88.9.nupkg.sha512",
     "C:\\Users\\mikew\\.nuget\\packages\\skiasharp.nativeassets.webassembly\\2.88.9\\skiasharp.nativeassets.webassembly.2.88.9.nupkg.sha512",
     "C:\\Users\\mikew\\.nuget\\packages\\skiasharp.nativeassets.win32\\2.88.9\\skiasharp.nativeassets.win32.2.88.9.nupkg.sha512",
     "C:\\Users\\mikew\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512",
-    "C:\\Users\\mikew\\.nuget\\packages\\tmds.dbus.protocol\\0.20.0\\tmds.dbus.protocol.0.20.0.nupkg.sha512",
-    "C:\\Users\\mikew\\.nuget\\packages\\microsoft.netcore.app.runtime.osx-arm64\\8.0.6\\microsoft.netcore.app.runtime.osx-arm64.8.0.6.nupkg.sha512",
-    "C:\\Users\\mikew\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.osx-arm64\\8.0.6\\microsoft.aspnetcore.app.runtime.osx-arm64.8.0.6.nupkg.sha512",
-    "C:\\Users\\mikew\\.nuget\\packages\\microsoft.netcore.app.host.osx-arm64\\8.0.6\\microsoft.netcore.app.host.osx-arm64.8.0.6.nupkg.sha512"
+    "C:\\Users\\mikew\\.nuget\\packages\\tmds.dbus.protocol\\0.20.0\\tmds.dbus.protocol.0.20.0.nupkg.sha512"
   ],
   "logs": []
 }
