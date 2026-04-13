@@ -1,26 +1,18 @@
-using System.Windows;
-using System.Windows.Media.Imaging;
+using SkiaSharp;
 
 namespace Cropaganda.Services;
 
 /// <summary>
-/// Core image cropping operations. Uses WPF's built-in imaging (WIC).
+/// Core image cropping operations. Uses SkiaSharp for cross-platform support.
 /// </summary>
 public interface ICropService
 {
-    /// <summary>
-    /// Loads an image from disk, preserving EXIF metadata.
-    /// </summary>
-    BitmapSource LoadImage(string path);
+    /// <summary>Loads an image from disk.</summary>
+    SKBitmap LoadImage(string path);
 
-    /// <summary>
-    /// Crops the source image to the specified rectangle (in pixel coordinates).
-    /// </summary>
-    BitmapSource Crop(BitmapSource source, Int32Rect cropRect);
+    /// <summary>Crops the source image to the specified pixel rectangle.</summary>
+    SKBitmap Crop(SKBitmap source, SKRectI cropRect);
 
-    /// <summary>
-    /// Saves the image as JPEG with the specified quality (1-100).
-    /// Preserves original EXIF metadata when available.
-    /// </summary>
-    void Save(BitmapSource image, string outputPath, int jpegQuality = 95, BitmapMetadata? metadata = null);
+    /// <summary>Saves the image as JPEG with the specified quality (1-100).</summary>
+    void Save(SKBitmap image, string outputPath, int jpegQuality = 95);
 }

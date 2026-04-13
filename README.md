@@ -1,41 +1,26 @@
 # Cropaganda
 
-Fast batch photo cropping to 4:5 (Instagram) format. Drag photos in, zoom/pan to frame the crop, hit Enter. Output images are written to an output folder as you go.
+## What is this?
 
-## Stack
+Batch-cropping your vacation pics for Instagram? This is the tool you build when you’re too lazy to do it in Photoshop 200 times. Cropaganda: ruthlessly crops your photos to 4:5, no questions asked.
 
-- **C# / WPF** on .NET 8 (Windows)
-- **Image processing:** WPF built-in imaging (`System.Windows.Media.Imaging` / Windows Imaging Component)
-  - Zero external dependencies for image ops
-  - JPEG quality control via `JpegBitmapEncoder.QualityLevel`
-  - EXIF metadata preservation via `BitmapMetadata`
-- **Tests:** xUnit
-
-### Why WPF built-in imaging?
-
-Cropaganda does one thing: crop images. For a pure crop operation (extracting a pixel rectangle), all imaging libraries produce identical output — no resampling is involved. WPF's `BitmapSource` is already the native image type in our UI framework, so we avoid conversion overhead and keep the dependency count at zero. JPEG encoding quality at 95+ is indistinguishable across libraries. If we ever need advanced processing (filters, batch resize), we can add a library then. YAGNI.
-
-## Build
+## How to build
 
 ```bash
-dotnet build Cropaganda.sln
+dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true -p:SelfContained=true src/Cropaganda/Cropaganda.csproj
 ```
 
-## Test
+## How to install / run
 
-```bash
-dotnet test Cropaganda.sln
-```
+No installer. No registry. No drama. Just grab the .exe from `src/Cropaganda/bin/Release/net8.0/win-x64/publish/`, put it wherever you want, and double-click. That’s it.
 
-## Project Structure
+## How to use
 
-```
-Cropaganda.sln
-src/
-  Cropaganda/              # WPF app
-    Services/
-      ICropService.cs      # Core crop interface
-    App.xaml
-    MainWindow.xaml
-  Cropaganda.Tests/        # xUnit tests
-```
+- Drag and drop a bunch of photos onto the window
+- Mouse wheel to zoom in/out
+- Click and drag to pan the image behind the fixed 4:5 crop box
+- Hit Enter to save the crop and jump to the next image
+
+## Output
+
+Cropped JPEGs (quality 95) land in a `cropped\` subfolder next to your originals. Originals are untouched. Your secret is safe.

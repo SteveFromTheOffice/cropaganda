@@ -1,0 +1,5 @@
+C:\Users\mikew\source\repos\cropaganda\publish-mac\Cropaganda.pdb
+C:\Users\mikew\source\repos\cropaganda\publish-mac\libAvaloniaNative.dylib
+C:\Users\mikew\source\repos\cropaganda\publish-mac\libHarfBuzzSharp.dylib
+C:\Users\mikew\source\repos\cropaganda\publish-mac\libSkiaSharp.dylib
+C:\Users\mikew\source\repos\cropaganda\publish-mac\Cropaganda

@@ -1,12 +1,14 @@
-using System.Windows;
+using Avalonia;
+using SkiaSharp;
+using Xunit;
 using Cropaganda.Services;
 
 namespace Cropaganda.Tests;
 
 /// <summary>
 /// Tests for CropMath — the static math helper that computes 4:5 crop rectangles.
-/// Assumes: CropMath.DefaultCropRect(int width, int height) -> Int32Rect
-///          CropMath.ComputeCropRect(int imageW, int imageH, int windowW, int windowH, double zoom, double panX, double panY) -> Int32Rect
+/// Assumes: CropMath.DefaultCropRect(int width, int height) -> SKRectI
+///          CropMath.ComputeCropRect(int imageW, int imageH, Size cropWindowPixelSize, Vector panOffset, double zoom) -> SKRectI
 /// </summary>
 public class CropMathTests
 {
@@ -28,8 +30,8 @@ public class CropMathTests
         var rect = CropMath.DefaultCropRect(1920, 1080);
 
         int expectedX = (1920 - 864) / 2; // 528
-        Assert.InRange(rect.X, expectedX - 1, expectedX + 1);
-        Assert.Equal(0, rect.Y);
+        Assert.InRange(rect.Left, expectedX - 1, expectedX + 1);
+        Assert.Equal(0, rect.Top);
     }
 
     [Fact]
@@ -59,8 +61,8 @@ public class CropMathTests
 
         Assert.Equal(800, rect.Width);
         Assert.Equal(1000, rect.Height);
-        Assert.Equal(0, rect.X);
-        Assert.Equal(0, rect.Y);
+        Assert.Equal(0, rect.Left);
+        Assert.Equal(0, rect.Top);
     }
 
     [Fact]
@@ -71,10 +73,10 @@ public class CropMathTests
 
         Assert.True(rect.Width > 0, "Width must be positive");
         Assert.True(rect.Height > 0, "Height must be positive");
-        Assert.True(rect.X >= 0, "X must be within image bounds");
-        Assert.True(rect.Y >= 0, "Y must be within image bounds");
-        Assert.True(rect.X + rect.Width <= 10, "Rect must not exceed image width");
-        Assert.True(rect.Y + rect.Height <= 10, "Rect must not exceed image height");
+        Assert.True(rect.Left >= 0, "X must be within image bounds");
+        Assert.True(rect.Top >= 0, "Y must be within image bounds");
+        Assert.True(rect.Left + rect.Width <= 10, "Rect must not exceed image width");
+        Assert.True(rect.Top + rect.Height <= 10, "Rect must not exceed image height");
     }
 
     [Fact]
@@ -93,8 +95,8 @@ public class CropMathTests
         var rect = CropMath.DefaultCropRect(3000, 500);
 
         int expectedX = (3000 - 400) / 2; // 1300
-        Assert.InRange(rect.X, expectedX - 1, expectedX + 1);
-        Assert.Equal(0, rect.Y);
+        Assert.InRange(rect.Left, expectedX - 1, expectedX + 1);
+        Assert.Equal(0, rect.Top);
     }
 
     [Theory]
@@ -109,18 +111,18 @@ public class CropMathTests
         var rect = CropMath.DefaultCropRect(imageW, imageH);
 
         // Horizontal center check
-        double centerX = rect.X + rect.Width / 2.0;
+        double centerX = rect.Left + rect.Width / 2.0;
         Assert.InRange(centerX, imageW / 2.0 - 1, imageW / 2.0 + 1);
 
         // Vertical center check
-        double centerY = rect.Y + rect.Height / 2.0;
+        double centerY = rect.Top + rect.Height / 2.0;
         Assert.InRange(centerY, imageH / 2.0 - 1, imageH / 2.0 + 1);
     }
 
     // ── ComputeCropRect ──────────────────────────────────────────────────────
     // Signature: ComputeCropRect(int imageWidth, int imageHeight,
     //                            Size cropWindowPixelSize, Vector panOffset, double zoom)
-    // panOffset convention: positive X pans the image right on screen (rect.X decreases);
+    // panOffset convention: positive X pans the image right on screen (rect.Left decreases);
     //   imgX = -panOffset.X / zoom, imgW = cropWindowPixelSize.Width / zoom
 
     [Fact]
@@ -133,8 +135,8 @@ public class CropMathTests
             panOffset: new Vector(0, 0),
             zoom: 1.0);
 
-        Assert.Equal(0, rect.X);
-        Assert.Equal(0, rect.Y);
+        Assert.Equal(0, rect.Left);
+        Assert.Equal(0, rect.Top);
         Assert.Equal(800, rect.Width);
         Assert.Equal(1000, rect.Height);
     }
@@ -152,8 +154,8 @@ public class CropMathTests
 
         Assert.Equal(240, rect.Width);
         Assert.Equal(300, rect.Height);
-        Assert.Equal(0, rect.X);
-        Assert.Equal(0, rect.Y);
+        Assert.Equal(0, rect.Left);
+        Assert.Equal(0, rect.Top);
     }
 
     [Fact]
@@ -167,8 +169,8 @@ public class CropMathTests
             panOffset: new Vector(-100, 0),
             zoom: 1.0);
 
-        Assert.Equal(100, rect.X);
-        Assert.Equal(0, rect.Y);
+        Assert.Equal(100, rect.Left);
+        Assert.Equal(0, rect.Top);
     }
 
     [Fact]
@@ -186,9 +188,9 @@ public class CropMathTests
             panOffset: new Vector(-50, 0),
             zoom: 1.0);
 
-        // Moving panOffset by -50 in X → imgX shifts +50 → rect.X shifts +50
-        Assert.Equal(noPan.X + 50, withPan.X);
-        Assert.Equal(noPan.Y, withPan.Y);
+        // Moving panOffset by -50 in X → imgX shifts +50 → rect.Left shifts +50
+        Assert.Equal(noPan.Left + 50, withPan.Left);
+        Assert.Equal(noPan.Top, withPan.Top);
     }
 
     [Fact]
@@ -201,10 +203,10 @@ public class CropMathTests
             panOffset: new Vector(-99999, -99999),
             zoom: 1.0);
 
-        Assert.True(rect.X >= 0, "X must be >= 0 after clamping");
-        Assert.True(rect.Y >= 0, "Y must be >= 0 after clamping");
-        Assert.True(rect.X + rect.Width <= 800, "Right edge must not exceed image width");
-        Assert.True(rect.Y + rect.Height <= 1000, "Bottom edge must not exceed image height");
+        Assert.True(rect.Left >= 0, "X must be >= 0 after clamping");
+        Assert.True(rect.Top >= 0, "Y must be >= 0 after clamping");
+        Assert.True(rect.Left + rect.Width <= 800, "Right edge must not exceed image width");
+        Assert.True(rect.Top + rect.Height <= 1000, "Bottom edge must not exceed image height");
     }
 
     [Theory]

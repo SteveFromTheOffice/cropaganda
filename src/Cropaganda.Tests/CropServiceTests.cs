@@ -1,33 +1,30 @@
 using System;
 using System.IO;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using SkiaSharp;
+using Xunit;
 using Cropaganda.Services;
 
 namespace Cropaganda.Tests;
 
 /// <summary>
-/// Integration tests for CropService — uses programmatically created BitmapSources (no external files).
+/// Integration tests for CropService — uses programmatically created SKBitmaps (no external files).
 /// Assumes a concrete class CropService : ICropService in Cropaganda.Services.
 /// </summary>
 public class CropServiceTests
 {
-    private static BitmapSource CreateTestBitmap(int width, int height)
+    private static SKBitmap CreateTestBitmap(int width, int height)
     {
-        var pixels = new byte[width * height * 4]; // BGRA
-        // Simple gradient so pixels are non-trivially patterned
+        var bitmap = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
+        using var canvas = new SKCanvas(bitmap);
+        canvas.Clear(SKColors.Transparent);
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
-            {
-                int i = (y * width + x) * 4;
-                pixels[i + 0] = (byte)(x % 256);       // B
-                pixels[i + 1] = (byte)(y % 256);       // G
-                pixels[i + 2] = (byte)((x + y) % 256); // R
-                pixels[i + 3] = 255;                   // A
-            }
-        return BitmapSource.Create(width, height, 96, 96,
-            PixelFormats.Bgra32, null, pixels, width * 4);
+                bitmap.SetPixel(x, y, new SKColor(
+                    (byte)(x % 256),
+                    (byte)(y % 256),
+                    (byte)((x + y) % 256),
+                    255));
+        return bitmap;
     }
 
     private static ICropService CreateService() => new CropService();
@@ -40,10 +37,10 @@ public class CropServiceTests
         var source = CreateTestBitmap(200, 200);
         var svc = CreateService();
 
-        var result = svc.Crop(source, new Int32Rect(50, 50, 100, 100));
+        var result = svc.Crop(source, SKRectI.Create(50, 50, 100, 100));
 
-        Assert.Equal(100, result.PixelWidth);
-        Assert.Equal(100, result.PixelHeight);
+        Assert.Equal(100, result.Width);
+        Assert.Equal(100, result.Height);
     }
 
     [Fact]
@@ -52,10 +49,10 @@ public class CropServiceTests
         var source = CreateTestBitmap(320, 400);
         var svc = CreateService();
 
-        var result = svc.Crop(source, new Int32Rect(0, 0, 320, 400));
+        var result = svc.Crop(source, SKRectI.Create(0, 0, 320, 400));
 
-        Assert.Equal(320, result.PixelWidth);
-        Assert.Equal(400, result.PixelHeight);
+        Assert.Equal(320, result.Width);
+        Assert.Equal(400, result.Height);
     }
 
     [Fact]
@@ -65,12 +62,12 @@ public class CropServiceTests
         var source = CreateTestBitmap(200, 200);
         var svc = CreateService();
 
-        var result = svc.Crop(source, new Int32Rect(100, 100, 150, 150));
+        var result = svc.Crop(source, SKRectI.Create(100, 100, 150, 150));
 
-        Assert.True(result.PixelWidth > 0);
-        Assert.True(result.PixelHeight > 0);
-        Assert.True(result.PixelWidth <= 200);
-        Assert.True(result.PixelHeight <= 200);
+        Assert.True(result.Width > 0);
+        Assert.True(result.Height > 0);
+        Assert.True(result.Width <= 200);
+        Assert.True(result.Height <= 200);
     }
 
     [Fact]
@@ -80,7 +77,7 @@ public class CropServiceTests
         var svc = CreateService();
 
         Assert.Throws<ArgumentException>(() =>
-            svc.Crop(source, new Int32Rect(50, 50, 0, 0)));
+            svc.Crop(source, SKRectI.Create(50, 50, 0, 0)));
     }
 
     // ── Save + Reload ─────────────────────────────────────────────────────────
@@ -98,10 +95,10 @@ public class CropServiceTests
         try
         {
             svc.Save(source, outputPath, jpegQuality: 95);
-            var reloaded = svc.LoadImage(outputPath);
+            var reloaded = SKBitmap.Decode(outputPath);
 
-            Assert.Equal(source.PixelWidth, reloaded.PixelWidth);
-            Assert.Equal(source.PixelHeight, reloaded.PixelHeight);
+            Assert.Equal(source.Width, reloaded.Width);
+            Assert.Equal(source.Height, reloaded.Height);
         }
         finally
         {
@@ -135,12 +132,8 @@ public class CropServiceTests
         }
         finally
         {
-            // WIC may hold a brief read lock; retry delete a few times
-            for (int i = 0; i < 5; i++)
-            {
-                try { File.Delete(emptyPath); break; }
-                catch (IOException) { System.Threading.Thread.Sleep(50); }
-            }
+            if (File.Exists(emptyPath))
+                File.Delete(emptyPath);
         }
     }
 
@@ -148,7 +141,6 @@ public class CropServiceTests
     public void LoadImage_VeryLargeImage_PerformanceTest()
     {
         // Flag: load a ~8000×6000 image and verify it completes in reasonable time.
-        // Route to Livingston if perf is unacceptable.
         var svc = CreateService();
         _ = svc.LoadImage(@"C:\TestImages\48mp_test.jpg");
     }
