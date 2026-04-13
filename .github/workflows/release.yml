@@ -90,6 +90,27 @@ jobs:
           </plist>
           EOF
 
+      - name: Ad-hoc sign .app bundle
+        run: codesign --deep --force --sign - Cropaganda.app
+
+      - name: Create .pkg installer
+        run: |
+          mkdir -p pkg-scripts
+          cat > pkg-scripts/postinstall << 'EOF'
+          #!/bin/bash
+          xattr -cr /Applications/Cropaganda.app
+          exit 0
+          EOF
+          chmod +x pkg-scripts/postinstall
+
+          pkgbuild \
+            --component Cropaganda.app \
+            --install-location /Applications \
+            --scripts pkg-scripts \
+            --identifier com.mikew.cropaganda \
+            --version 1.1 \
+            Cropaganda-macOS-AppleSilicon.pkg
+
       - name: Zip .app bundle (preserving permissions)
         run: zip -r --symlinks Cropaganda-macOS-AppleSilicon.zip Cropaganda.app
 
@@ -97,7 +118,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-arm64-build
-          path: Cropaganda-macOS-AppleSilicon.zip
+          path: |
+            Cropaganda-macOS-AppleSilicon.pkg
+            Cropaganda-macOS-AppleSilicon.zip
 
   release:
     name: Create GitHub Release
@@ -117,18 +140,19 @@ jobs:
             | Platform | File |
             |---|---|
             | 🪟 Windows (x64) | `Cropaganda-Windows.zip` — extract and double-click `Cropaganda.exe` |
-            | 🍎 macOS Apple Silicon (M1/M2/M3/M4) | `Cropaganda-macOS-AppleSilicon.zip` |
+            | 🍎 macOS Apple Silicon (M1/M2/M3/M4) — **Installer** | `Cropaganda-macOS-AppleSilicon.pkg` — double-click to install, no Terminal needed |
+            | 🍎 macOS Apple Silicon (M1/M2/M3/M4) — **Manual** | `Cropaganda-macOS-AppleSilicon.zip` — extract and drag to Applications |
 
-            ### macOS first-launch
-            1. Extract the zip → you get `Cropaganda.app`
-            2. **Remove the quarantine flag** (required — app is unsigned):
-               ```
-               xattr -cr Cropaganda.app
-               ```
-            3. Drag it to your Applications folder (optional but recommended)
-            4. Double-click to open ✅
+            ### macOS notes
+            The `.pkg` installer is the easiest option — it installs the app to `/Applications` and clears the macOS quarantine flag automatically.
+
+            If you use the `.zip` instead, you'll need to remove the quarantine flag manually before the app will open:
+            ```
+            xattr -cr /Applications/Cropaganda.app
+            ```
           files: |
             windows-build/Cropaganda-Windows.zip
+            macos-arm64-build/Cropaganda-macOS-AppleSilicon.pkg
             macos-arm64-build/Cropaganda-macOS-AppleSilicon.zip
           draft: false
           prerelease: false
