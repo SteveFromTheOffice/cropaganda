@@ -28,6 +28,7 @@ jobs:
           -r win-x64
           --self-contained true
           -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
           -o out/windows
 
       - name: Zip Windows build
@@ -65,8 +66,7 @@ jobs:
           mkdir -p "$APP/Contents/MacOS"
           mkdir -p "$APP/Contents/Resources"
 
-          cp out/macos-arm64/Cropaganda          "$APP/Contents/MacOS/"
-          cp out/macos-arm64/*.dylib             "$APP/Contents/MacOS/" 2>/dev/null || true
+          cp -r out/macos-arm64/.             "$APP/Contents/MacOS/"
 
           chmod +x "$APP/Contents/MacOS/Cropaganda"
 
@@ -142,17 +142,17 @@ jobs:
             | 🪟 Windows (x64) | `Cropaganda-Windows.zip` — extract and double-click `Cropaganda.exe` |
             | 🍎 macOS Apple Silicon (M1/M2/M3/M4) | `Cropaganda-macOS-AppleSilicon.pkg` |
 
-            ### macOS install instructions
-            This app is not yet notarized with Apple, so macOS Gatekeeper will block it on first run. Use one of these methods to install:
+            ### 🍎 macOS — first-run required step
 
-            **Option A — System Settings (no Terminal needed):**
-            1. Double-click `Cropaganda-macOS-AppleSilicon.pkg` — it will be blocked
+            > ⚠️ **macOS will block this app on first launch.** You must allow it manually — this is a one-time step.
+
+            1. Double-click `Cropaganda-macOS-AppleSilicon.pkg` — macOS will say it can't be opened
             2. Open **System Settings → Privacy & Security**
-            3. Scroll to the **Security** section — you'll see *"Cropaganda was blocked"*
-            4. Click **Open Anyway** → enter your password
-            5. The installer runs and the app is ready in `/Applications`
+            3. Scroll down to the **Security** section — you'll see *"Cropaganda was blocked"*
+            4. Click **Open Anyway** and enter your password
+            5. The installer will run and Cropaganda will appear in `/Applications`
 
-            **Option B — Terminal:**
+            **Prefer Terminal?**
             ```bash
             xattr -cr ~/Downloads/Cropaganda-macOS-AppleSilicon.pkg
             open ~/Downloads/Cropaganda-macOS-AppleSilicon.pkg
