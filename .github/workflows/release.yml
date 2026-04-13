@@ -143,14 +143,20 @@ jobs:
             | 🍎 macOS Apple Silicon (M1/M2/M3/M4) | `Cropaganda-macOS-AppleSilicon.pkg` |
 
             ### macOS install instructions
-            This app is not yet notarized with Apple. You need to bypass Gatekeeper once on install:
+            This app is not yet notarized with Apple, so macOS Gatekeeper will block it on first run. Use one of these methods to install:
 
-            1. Download `Cropaganda-macOS-AppleSilicon.pkg`
-            2. In **Finder**, right-click the `.pkg` → **Open**
-            3. Click **Open** in the security dialog
-            4. The installer will put the app in `/Applications` and clear the quarantine flag automatically
+            **Option A — System Settings (no Terminal needed):**
+            1. Double-click `Cropaganda-macOS-AppleSilicon.pkg` — it will be blocked
+            2. Open **System Settings → Privacy & Security**
+            3. Scroll to the **Security** section — you'll see *"Cropaganda was blocked"*
+            4. Click **Open Anyway** → enter your password
+            5. The installer runs and the app is ready in `/Applications`
 
-            > ⚠️ Double-clicking the `.pkg` directly will show "cannot be opened" — you must **right-click → Open** the first time.
+            **Option B — Terminal:**
+            ```bash
+            xattr -cr ~/Downloads/Cropaganda-macOS-AppleSilicon.pkg
+            open ~/Downloads/Cropaganda-macOS-AppleSilicon.pkg
+            ```
           files: |
             windows-build/Cropaganda-Windows.zip
             macos-arm64-build/Cropaganda-macOS-AppleSilicon.pkg
