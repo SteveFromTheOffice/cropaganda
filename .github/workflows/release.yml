@@ -121,10 +121,12 @@ jobs:
 
             ### macOS first-launch
             1. Extract the zip → you get `Cropaganda.app`
-            2. Drag it to your Applications folder (optional but recommended)
-            3. **Right-click → Open** (first time only — macOS security check for apps not from the App Store)
-            4. Click **Open** in the dialog
-            5. After that, double-click works normally ✅
+            2. **Remove the quarantine flag** (required — app is unsigned):
+               ```
+               xattr -cr Cropaganda.app
+               ```
+            3. Drag it to your Applications folder (optional but recommended)
+            4. Double-click to open ✅
           files: |
             windows-build/Cropaganda-Windows.zip
             macos-arm64-build/Cropaganda-macOS-AppleSilicon.zip
