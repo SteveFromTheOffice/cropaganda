@@ -1,0 +1,194 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish Windows x64
+        run: >
+          dotnet publish src/Cropaganda/Cropaganda.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -o out/windows
+
+      - name: Zip Windows build
+        run: Compress-Archive -Path out/windows/Cropaganda.exe -DestinationPath Cropaganda-Windows.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: Cropaganda-Windows.zip
+
+  build-macos-arm64:
+    name: Build macOS (Apple Silicon)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish macOS arm64
+        run: >
+          dotnet publish src/Cropaganda/Cropaganda.csproj
+          -c Release
+          -r osx-arm64
+          --self-contained true
+          -p:PublishSingleFile=false
+          -o out/macos-arm64
+
+      - name: Create .app bundle
+        run: |
+          APP=Cropaganda.app
+          mkdir -p "$APP/Contents/MacOS"
+          mkdir -p "$APP/Contents/Resources"
+
+          cp out/macos-arm64/Cropaganda          "$APP/Contents/MacOS/"
+          cp out/macos-arm64/*.dylib             "$APP/Contents/MacOS/" 2>/dev/null || true
+
+          chmod +x "$APP/Contents/MacOS/Cropaganda"
+
+          cat > "$APP/Contents/Info.plist" <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+            "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleExecutable</key>      <string>Cropaganda</string>
+            <key>CFBundleIdentifier</key>      <string>com.mikew.cropaganda</string>
+            <key>CFBundleName</key>            <string>Cropaganda</string>
+            <key>CFBundleDisplayName</key>     <string>Cropaganda</string>
+            <key>CFBundleVersion</key>         <string>1.0</string>
+            <key>CFBundleShortVersionString</key> <string>1.0</string>
+            <key>CFBundlePackageType</key>     <string>APPL</string>
+            <key>LSMinimumSystemVersion</key>  <string>12.0</string>
+            <key>NSHighResolutionCapable</key> <true/>
+            <key>NSHumanReadableCopyright</key><string>© mikew</string>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Zip .app bundle (preserving permissions)
+        run: zip -r --symlinks Cropaganda-macOS-AppleSilicon.zip Cropaganda.app
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm64-build
+          path: Cropaganda-macOS-AppleSilicon.zip
+
+  build-macos-intel:
+    name: Build macOS (Intel)
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish macOS x64
+        run: >
+          dotnet publish src/Cropaganda/Cropaganda.csproj
+          -c Release
+          -r osx-x64
+          --self-contained true
+          -p:PublishSingleFile=false
+          -o out/macos-x64
+
+      - name: Create .app bundle
+        run: |
+          APP=Cropaganda.app
+          mkdir -p "$APP/Contents/MacOS"
+          mkdir -p "$APP/Contents/Resources"
+
+          cp out/macos-x64/Cropaganda          "$APP/Contents/MacOS/"
+          cp out/macos-x64/*.dylib             "$APP/Contents/MacOS/" 2>/dev/null || true
+
+          chmod +x "$APP/Contents/MacOS/Cropaganda"
+
+          cat > "$APP/Contents/Info.plist" <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+            "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleExecutable</key>      <string>Cropaganda</string>
+            <key>CFBundleIdentifier</key>      <string>com.mikew.cropaganda</string>
+            <key>CFBundleName</key>            <string>Cropaganda</string>
+            <key>CFBundleDisplayName</key>     <string>Cropaganda</string>
+            <key>CFBundleVersion</key>         <string>1.0</string>
+            <key>CFBundleShortVersionString</key> <string>1.0</string>
+            <key>CFBundlePackageType</key>     <string>APPL</string>
+            <key>LSMinimumSystemVersion</key>  <string>12.0</string>
+            <key>NSHighResolutionCapable</key> <true/>
+            <key>NSHumanReadableCopyright</key><string>© mikew</string>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Zip .app bundle (preserving permissions)
+        run: zip -r --symlinks Cropaganda-macOS-Intel.zip Cropaganda.app
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-intel-build
+          path: Cropaganda-macOS-Intel.zip
+
+  release:
+    name: Create GitHub Release
+    needs: [build-windows, build-macos-arm64, build-macos-intel]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Cropaganda ${{ github.ref_name }}"
+          body: |
+            ## 📥 Downloads
+
+            | Platform | File |
+            |---|---|
+            | 🪟 Windows (x64) | `Cropaganda-Windows.zip` — extract and double-click `Cropaganda.exe` |
+            | 🍎 macOS Apple Silicon (M1/M2/M3) | `Cropaganda-macOS-AppleSilicon.zip` |
+            | 🍎 macOS Intel | `Cropaganda-macOS-Intel.zip` |
+
+            ### macOS first-launch
+            1. Extract the zip → you get `Cropaganda.app`
+            2. Drag it to your Applications folder (optional but recommended)
+            3. **Right-click → Open** (first time only — macOS security check for apps not from the App Store)
+            4. Click **Open** in the dialog
+            5. After that, double-click works normally ✅
+          files: |
+            windows-build/Cropaganda-Windows.zip
+            macos-arm64-build/Cropaganda-macOS-AppleSilicon.zip
+            macos-intel-build/Cropaganda-macOS-Intel.zip
+          draft: false
+          prerelease: false
