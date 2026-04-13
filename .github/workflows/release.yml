@@ -140,16 +140,17 @@ jobs:
             | Platform | File |
             |---|---|
             | 🪟 Windows (x64) | `Cropaganda-Windows.zip` — extract and double-click `Cropaganda.exe` |
-            | 🍎 macOS Apple Silicon (M1/M2/M3/M4) — **Installer** | `Cropaganda-macOS-AppleSilicon.pkg` — double-click to install, no Terminal needed |
-            | 🍎 macOS Apple Silicon (M1/M2/M3/M4) — **Manual** | `Cropaganda-macOS-AppleSilicon.zip` — extract and drag to Applications |
+            | 🍎 macOS Apple Silicon (M1/M2/M3/M4) | `Cropaganda-macOS-AppleSilicon.pkg` |
 
-            ### macOS notes
-            The `.pkg` installer is the easiest option — it installs the app to `/Applications` and clears the macOS quarantine flag automatically.
+            ### macOS install instructions
+            This app is not yet notarized with Apple. You need to bypass Gatekeeper once on install:
 
-            If you use the `.zip` instead, you'll need to remove the quarantine flag manually before the app will open:
-            ```
-            xattr -cr /Applications/Cropaganda.app
-            ```
+            1. Download `Cropaganda-macOS-AppleSilicon.pkg`
+            2. In **Finder**, right-click the `.pkg` → **Open**
+            3. Click **Open** in the security dialog
+            4. The installer will put the app in `/Applications` and clear the quarantine flag automatically
+
+            > ⚠️ Double-clicking the `.pkg` directly will show "cannot be opened" — you must **right-click → Open** the first time.
           files: |
             windows-build/Cropaganda-Windows.zip
             macos-arm64-build/Cropaganda-macOS-AppleSilicon.pkg
