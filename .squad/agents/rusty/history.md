@@ -10,6 +10,11 @@
 
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
 
+### 2026-04-14: macOS compatibility — OutputType and COM interop
+- **Decision:** Changed `<OutputType>` from `WinExe` to `Exe`. `WinExe` is Windows-only (hides console window); it breaks Avalonia's macOS process lifecycle handling.
+- **Decision:** Removed `<BuiltInComInteropSupport>true</BuiltInComInteropSupport>`. This is a Windows COM source-generator flag. It does not compile cleanly on macOS and the app uses no COM APIs.
+- The project already had `SkiaSharp.NativeAssets.macOS` and `SkiaSharp.NativeAssets.Win32` so native rendering was already cross-platform — only the project metadata needed fixing.
+
 ### 2026-04-13: Image library decision & solution scaffolding
 - **Decision:** WPF built-in imaging (`System.Windows.Media.Imaging` / WIC) — zero external deps. Crop operations don't resample pixels so all libraries produce identical output. YAGNI on heavier libs.
 - **Escape hatch:** `ICropService` interface abstracts the implementation. Swap to ImageSharp later if needed (resize, filters, cross-platform).
